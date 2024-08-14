@@ -10,7 +10,7 @@ const app = new Hono<{
 }>();
 
 app.get("/", async (c) => {
-  return c.text("Server is working Fine");
+  return c.text("Server of Medium-Clone is working Fine");
 });
 
 app.route("/api/v1/user", userRouter);
