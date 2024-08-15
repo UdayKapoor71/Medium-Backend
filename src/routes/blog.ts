@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import { createBlogInput, updateBlogInput } from "@uday711/medium-clone-common";
 import { Hono } from "hono";
 import { verify } from "hono/jwt"; //in node we get it from auth jwt
 
@@ -18,18 +19,20 @@ blogRouter.use("/*", async (c, next) => {
   //this will extract the user id
   //pass it down to the route handler
   const authHeader = c.req.header("authorization") || "";
-  try{const user = await verify(authHeader, c.env.JWT_SECRET);
-
-  if (user) {
-    c.set("userId", String(user.id));
-    //userId doesnot exist in c so we have to explicitly explain this userid
-    await next();
-  } else {
-    c.status(403);
-    return c.json({
-      message: "You are not logged in",
-    });
-  }}catch(err){
+  try {
+    const user = await verify(authHeader, c.env.JWT_SECRET);
+    //this try catch is because if the jwt secret chnges then it will throw the error
+    if (user) {
+      c.set("userId", String(user.id));
+      //userId doesnot exist in c so we have to explicitly explain this userid
+      await next();
+    } else {
+      c.status(403);
+      return c.json({
+        message: "You are not logged in",
+      });
+    }
+  } catch (err) {
     c.status(403);
     return c.json({
       message: "You are not logged in",
@@ -39,6 +42,13 @@ blogRouter.use("/*", async (c, next) => {
 
 blogRouter.post("/", async (c) => {
   const body = await c.req.json();
+  const { success } = createBlogInput.safeParse(body);
+  if (!success) {
+    c.status(411);
+    return c.json({
+      message: "Inputs not correct",
+    });
+  }
   const authorId = c.get("userId");
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
@@ -65,7 +75,13 @@ blogRouter.post("/", async (c) => {
 
 blogRouter.put("/", async (c) => {
   const body = await c.req.json();
-
+  const { success } = updateBlogInput.safeParse(body);
+  if (!success) {
+    c.status(411);
+    return c.json({
+      message: "Inputs not correct",
+    });
+  }
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
