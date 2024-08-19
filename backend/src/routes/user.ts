@@ -40,7 +40,7 @@ userRouter.post("/signup", async (c) => {
 
     const token = await sign({ id: user.id }, c.env.JWT_SECRET);
 
-    return c.json({ jwt: token });
+    return c.json(token);
   } catch (err) {
     console.log(err);
     c.status(411);
@@ -75,7 +75,7 @@ userRouter.post("/signin", async (c) => {
     }
 
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ jwt });
+    return c.json(jwt);
   } catch (e) {
     console.log(e);
     c.status(411);
