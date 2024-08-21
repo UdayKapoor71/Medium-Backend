@@ -46,12 +46,12 @@ export function Avatar({ name }: { name: string }) {
       className={`relative inline-flex items-center justify-center w-6 h-6 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600`}
     >
       <span className="font-xs text-gray-600 dark:text-gray-300">
-        {name[0]}
+        {name ? name[0] : ""}
       </span>
     </div>
   );
 }
 
-function Circle() {
+export function Circle() {
   return <div className="h-1 w-1 rounded-full bg-slate-700"></div>;
 }

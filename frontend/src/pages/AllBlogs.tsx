@@ -1,11 +1,24 @@
 import { BlogCard } from "../components/BlogCard";
+import { BlogSkeleton } from "../components/BlogSkeleton";
 import { NavBar } from "../components/Navbar";
 import { useBlogs } from "../hooks";
 
 export const Blogs = () => {
   const { loading, blogs } = useBlogs();
   if (loading) {
-    return <div>Loading....</div>;
+    return (
+      <>
+        <NavBar />
+        <div className="flex justify-center">
+          <div>
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+            <BlogSkeleton />
+          </div>
+        </div>
+      </>
+    );
   }
   return (
     <div>
